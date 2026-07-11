@@ -39,3 +39,8 @@ p { color: var(--muted); line-height: 1.65; }
 .row { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; border-top: 1px solid var(--border); padding: 14px 0; }
 pre { overflow: auto; background: rgba(0,0,0,.22); border: 1px solid var(--border); border-radius: 14px; padding: 14px; color: #d9f99d; }
 ul { padding-left: 20px; color: var(--muted); line-height: 1.7; }
+
+.actions-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0; }
+button.button { cursor: pointer; font: inherit; }
+.button-secondary { background: transparent; color: var(--text); border-color: var(--border); }
+h3 { margin: 18px 0 8px; }
