@@ -1,5 +1,6 @@
 import { env } from "@/lib/env";
 import { collections } from "@/lib/mongodb/collections";
+import type { IntegrationConnectionDoc } from "@/lib/mongodb/types";
 import { getComposioClient } from "./client";
 
 export const defaultToolkits = [
@@ -13,6 +14,12 @@ export const defaultToolkits = [
 
 export type AgencyToolkit = (typeof defaultToolkits)[number];
 
+type CallbackStatus = "success" | "failed" | "error" | string | undefined;
+
+export function isAgencyToolkit(value: string): value is AgencyToolkit {
+  return (defaultToolkits as readonly string[]).includes(value);
+}
+
 export async function getComposioSession(userId = env.agencyUserId) {
   const composio = getComposioClient();
   return composio.create(userId, {
@@ -20,8 +27,8 @@ export async function getComposioSession(userId = env.agencyUserId) {
       callbackUrl: env.composioCallbackUrl,
     },
     toolkits: [...defaultToolkits],
-    // Preload no tools eagerly — avoids the 1000-tool API cap.
-    // Tools are still available on-demand via session.tools().
+    // Preload no tools eagerly — avoids Composio's large-toolset/API caps.
+    // Agents can still fetch session-scoped tools on demand.
     preload: { tools: [] },
   });
 }
@@ -33,23 +40,74 @@ export async function createConnectLink(toolkit: AgencyToolkit, userId = env.age
   });
 
   const c = await collections();
+  const now = new Date();
   await c.integrationConnections.updateOne(
     { userId, toolkit },
     {
       $set: {
         status: "pending",
-        updatedAt: new Date(),
+        updatedAt: now,
       },
       $setOnInsert: {
         userId,
         toolkit,
-        createdAt: new Date(),
+        createdAt: now,
       },
     },
     { upsert: true },
   );
 
   return request.redirectUrl;
+}
+
+export async function syncConnectionFromCallback({
+  toolkit,
+  status,
+  connectedAccountId,
+  userId = env.agencyUserId,
+}: {
+  toolkit: AgencyToolkit;
+  status: CallbackStatus;
+  connectedAccountId?: string;
+  userId?: string;
+}) {
+  const connectionStatus: IntegrationConnectionDoc["status"] =
+    status === "success" ? "active" : status === "failed" || status === "error" ? "disconnected" : "pending";
+
+  const c = await collections();
+  const now = new Date();
+  await c.integrationConnections.updateOne(
+    { userId, toolkit },
+    {
+      $set: {
+        status: connectionStatus,
+        connectedAccountId,
+        updatedAt: now,
+        metadata: {
+          callbackStatus: status ?? "unknown",
+          lastCallbackAt: now.toISOString(),
+        },
+      },
+      $setOnInsert: {
+        userId,
+        toolkit,
+        createdAt: now,
+      },
+    },
+    { upsert: true },
+  );
+
+  return connectionStatus;
+}
+
+export async function getStoredIntegrationConnections(userId = env.agencyUserId) {
+  const c = await collections();
+  const rows = await c.integrationConnections
+    .find({ userId, toolkit: { $in: [...defaultToolkits] } })
+    .sort({ toolkit: 1 })
+    .toArray();
+
+  return new Map(rows.map((row) => [row.toolkit, row]));
 }
 
 export async function getMastraComposioTools(userId = env.agencyUserId) {

@@ -1,9 +1,5 @@
 import { redirect } from "next/navigation";
-import { createConnectLink, defaultToolkits, type AgencyToolkit } from "@/lib/composio/session";
-
-function isAgencyToolkit(value: string): value is AgencyToolkit {
-  return (defaultToolkits as readonly string[]).includes(value);
-}
+import { createConnectLink, isAgencyToolkit } from "@/lib/composio/session";
 
 export async function GET(
   _request: Request,

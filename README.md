@@ -23,17 +23,17 @@ Lead intake
 - **Composio** — outside-world integrations and per-user auth for GitHub, Linear, Slack, Google Drive/Docs, Gmail, etc.
 - **Next.js** — AgencyOS dashboard and API surface
 
-## Sprint 1 scope
+## Current scope
 
-This repo starts with the foundation:
+This repo now has the foundation plus the first operational loop:
 
 - MongoDB typed collections and indexes
-- Composio session/auth helper
+- Composio session/auth helper and callback status sync
 - Mastra agent definitions for the 8-agent agency
 - Mastra internal tools for leads/projects/tasks/approvals
 - First controlled workflow: `leadToProjectWorkflow`
-- Minimal dashboard pages for overview and integrations
-- API routes for lead creation and integration connection links
+- Dashboard pages for overview, integrations, projects, project detail, and approvals
+- API routes for lead creation, integration connection links, approval status updates, and `POST /api/workflows/lead-to-project`
 
 ## Quick start
 
@@ -100,5 +100,5 @@ src/
     workflows/         controlled workflows
     index.ts           Mastra runtime registration
 scripts/
-  setup-mongo-indexes.ts
+  setup.ts
 ```

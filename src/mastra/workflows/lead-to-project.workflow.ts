@@ -1,5 +1,6 @@
 import { createStep, createWorkflow } from "@mastra/core/workflows";
 import { z } from "zod";
+import { ObjectId } from "mongodb";
 import { collections, nowTimestamps } from "@/lib/mongodb/collections";
 
 const intakeSchema = z.object({
@@ -125,7 +126,7 @@ const persistProjectStep = createStep({
   execute: async ({ inputData }) => {
     const c = await collections();
     const projectResult = await c.projects.insertOne({
-      leadId: inputData.leadId as never,
+      leadId: new ObjectId(inputData.leadId),
       name: inputData.project.name,
       type: inputData.project.type,
       status: "planning",

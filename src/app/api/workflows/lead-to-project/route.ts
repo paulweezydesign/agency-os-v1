@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { mastra } from "@/mastra";
 
-const createLeadSchema = z.object({
+const leadToProjectSchema = z.object({
   name: z.string(),
   company: z.string().optional(),
   email: z.string().email().optional(),
@@ -12,10 +12,14 @@ const createLeadSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const body = createLeadSchema.parse(await request.json());
-
-  const run = mastra.getWorkflow("leadToProjectWorkflow").createRun();
+  const body = leadToProjectSchema.parse(await request.json());
+  const workflow = mastra.getWorkflow("leadToProjectWorkflow");
+  const run = await workflow.createRun();
   const result = await run.start({ inputData: body });
 
-  return Response.json(result.result);
+  return Response.json({
+    workflow: "lead-to-project",
+    runId: run.runId,
+    result,
+  });
 }

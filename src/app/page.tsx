@@ -18,6 +18,8 @@ export default function HomePage() {
         </p>
         <div className="nav">
           <a className="button" href="/integrations">Connect integrations</a>
+          <a className="button" href="/projects">View projects</a>
+          <a className="button" href="/approvals">Approval queue</a>
           <span className="badge">Workflow: <span className="code">lead → project</span></span>
         </div>
       </section>
