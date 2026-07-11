@@ -14,3 +14,5 @@ yarn-error.log*
 pnpm-debug.log*
 
 tsconfig.tsbuildinfo
+.mastra/output/
+.mastra/cache/
