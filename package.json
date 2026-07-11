@@ -1,0 +1,35 @@
+{
+  "name": "agency-os-v1",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "dev:mastra": "mastra dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "db:indexes": "tsx scripts/setup-mongo-indexes.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "latest",
+    "@composio/core": "latest",
+    "@composio/mastra": "latest",
+    "@mastra/core": "latest",
+    "@mastra/memory": "latest",
+    "@mastra/mongodb": "latest",
+    "mongodb": "latest",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "mastra": "latest",
+    "tsx": "latest",
+    "typescript": "latest"
+  }
+}
