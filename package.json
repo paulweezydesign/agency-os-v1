@@ -9,7 +9,7 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "db:indexes": "tsx scripts/setup-mongo-indexes.ts"
+    "db:indexes": "tsx scripts/setup.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "latest",
