@@ -1,5 +1,5 @@
 import { env } from "@/lib/env";
-import { collections } from "@/lib/mongodb/collections";
+import { collections, nowTimestamps } from "@/lib/mongodb/collections";
 import { getComposioClient } from "./client";
 
 export const defaultToolkits = [
@@ -20,8 +20,9 @@ export async function getComposioSession(userId = env.agencyUserId) {
       callbackUrl: env.composioCallbackUrl,
     },
     toolkits: [...defaultToolkits],
-    // Preload no tools eagerly — avoids the 1000-tool API cap.
-    // Tools are still available on-demand via session.tools().
+    // Don't preload all tools — "all" exceeds the 1000-tool API limit and the
+    // preload schema only accepts { tools: string[] | "all" }, not a toolkits key.
+    // Tools are fetched on-demand via session.tools() when the agent runs.
     preload: { tools: [] },
   });
 }
