@@ -86,6 +86,14 @@ Agent drafts action
 → MongoDB logs result
 ```
 
+Approval execution endpoints:
+
+- `PATCH /api/approvals/:id` with `{ "status": "approved" | "rejected" }`
+- `POST /api/approvals/:id` from the dashboard forms (`approve`, `reject`, `execute`)
+- `POST /api/approvals/:id/execute` for direct Composio execution after approval
+
+`externalAction` should be a Composio tool slug/action name and `payload` should match that tool's expected arguments.
+
 ## Directory map
 
 ```txt
